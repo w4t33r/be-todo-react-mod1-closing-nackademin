@@ -6,10 +6,11 @@ const router = new Router()
 
 router.post('/registration',
     [
-        check('email', 'email is not correct').isEmail(),
-        check('email', 'Cant be empty').isEmpty,
-        check('password', 'Password must be longer that 4').isLength({min: 5, max: 36})
-    ],
+        check('email', 'email is not correct')
+            .isEmail(),
+        check('password', 'Password must be longer that 4')
+            .isLength({min: 5, max: 36})
+],
     async (req, res) => {
         try {
             const errors = validationResult(req)
@@ -17,7 +18,7 @@ router.post('/registration',
                 return res.status(400).json({message: "Uncorrect request", errors})
             }
             const {email, password} = req.body
-            const existUser = User.findOne({email})
+            const existUser = await User.findOne({email})
             if (existUser) {
                 return res.status(400).json({message: `User with email ${email} already exist`})
             }
