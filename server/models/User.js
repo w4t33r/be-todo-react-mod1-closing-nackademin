@@ -6,4 +6,4 @@ const User = new Schema({
     avatar:{type:String}
 })
 
-module.exports = model()
+module.exports = model('User', User)
