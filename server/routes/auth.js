@@ -1,8 +1,12 @@
 const Router = require("express")
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 const {check, validationResult} = require('express-validator')
 const User = require('../models/User')
 const router = new Router()
+require('dotenv').config()
+
+const secretKey = process.env.secret_key
 
 router.post('/registration',
     [
@@ -24,8 +28,46 @@ router.post('/registration',
             }
             const hashedPassword = await bcrypt.hash(password, 6)
             const user = new User({email, password: hashedPassword})
+
             await user.save()
             return res.json({message: "User was created."})
+        } catch (err) {
+            console.log(err)
+            res.send({message: "Server error"})
+        }
+    })
+
+
+
+
+
+
+router.post('/login',
+    [
+        check('email', 'its not a email')
+            .isEmail()
+    ],
+    async (req, res) => {
+        try {
+           const {email, password} = req.body
+            const user = await User.findOne({email})
+            if (!user) {
+                return res.status(404).json({message:'User not found'})
+            }
+            const isValidPass = bcrypt.compareSync(password, user.password)
+            if (!isValidPass) {
+                return res.status(400).json({message:'Pass is not correct'})
+            }
+
+            const token = jwt.sign({id:user.id},secretKey, {expiresIn: "30"})
+            return res.json({
+                token,
+                user: {
+                    id: user.id,
+                    email: user.email,
+                    avatar: user.avatar
+                }
+            })
         } catch (err) {
             console.log(err)
             res.send({message: "Server error"})
