@@ -8,6 +8,7 @@ const PORT = process.env.PORT
 const dbUrl = process.env.db_url
 
 app.use(express.json())
+
 app.use("/api/auth", authRouter)
 
 
