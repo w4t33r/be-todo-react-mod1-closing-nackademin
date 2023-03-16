@@ -1,14 +1,16 @@
 import Navbar from "./Navbar";
 import './app.css'
-import {BrowserRouter, Route} from "react-router-dom";
+import {BrowserRouter, Route, Routes} from "react-router-dom";
+import React from "react";
+import Registration from "./registration/Registration";
 function App() {
   return (
       <BrowserRouter>
           <div className="App">
               <Navbar/>
-              <Switch>
-                  <Route path="/registration" component={Registration}/>
-              </Switch>
+              <Routes>
+                  <Route path="/registration" element={<Registration/>}/>
+              </Routes>
           </div>
       </BrowserRouter>
   );
