@@ -11,6 +11,12 @@ const Navbar = () => {
                 <div className="navbar__reg"><NavLink to="/registration"> registration </NavLink></div>
             </div>
         </div>
+
+
+
+
+
+
     );
 };
 
