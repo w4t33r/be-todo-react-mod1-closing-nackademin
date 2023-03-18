@@ -59,7 +59,7 @@ router.post('/login',
                 return res.status(400).json({message:'Pass is not correct'})
             }
 
-            const token = jwt.sign({id:user.id},secretKey, {expiresIn: "30"})
+            const token = jwt.sign({id:user.id},secretKey, {expiresIn: "1h"})
             return res.json({
                 token,
                 user: {
