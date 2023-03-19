@@ -1,13 +1,23 @@
 import Navbar from "./Navbar";
 import './app.css'
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import React from "react";
+import React, {useEffect} from "react";
 import Registration from "./auth/Registration";
 import Login from "./auth/login";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {auth} from "../action/user";
 
 function App() {
     const isAuth = useSelector(state => state.user.isAuth)
+    const dispatch = useDispatch()
+
+
+    useEffect(() => {
+        if (localStorage.getItem('token')) {
+            dispatch(auth())
+        }
+    }, [])
+
     return (
         <BrowserRouter>
             <div className="App">
