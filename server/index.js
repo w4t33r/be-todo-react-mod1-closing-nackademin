@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require("mongoose");
 const authRouter = require("./routes/auth")
+const todoRoute = require('./routes/listRoute')
 const cors = require('./middleware/corsMiddleware')
 require('dotenv').config()
 
@@ -13,7 +14,7 @@ app.use(cors)
 app.use(express.json())
 
 app.use("/api/auth", authRouter)
-
+app.use("/api/list", todoRoute)
 
 const start = async () => {
     try {
