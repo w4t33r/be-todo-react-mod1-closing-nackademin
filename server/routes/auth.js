@@ -8,13 +8,15 @@ require('dotenv').config()
 
 const secretKey = process.env.secret_key
 
+const authMiddleware = require('../middleware/authMiddleware')
+
 router.post('/registration',
     [
         check('email', 'email is not correct')
             .isEmail(),
         check('password', 'Password must be longer that 4')
             .isLength({min: 5, max: 36})
-],
+    ],
     async (req, res) => {
         try {
             const errors = validationResult(req)
@@ -36,9 +38,6 @@ router.post('/registration',
             res.send({message: "Server error"})
         }
     })
-
-
-
 
 
 
@@ -73,6 +72,31 @@ router.post('/login',
             res.send({message: "Server error"})
         }
     })
+
+
+
+router.get('/auth', authMiddleware,
+    [
+        check('email', 'its not a email')
+            .isEmail()
+    ],
+    async (req, res) => {
+        try {
+            const user = await User.findOne({_id: req.user.id})
+            const token = jwt.sign({id: user.id}, secretKey, {expiresIn: "1h"})
+            return res.json({
+                token,
+                user: {
+                    id: user.id,
+                    email: user.email,
+                    avatar: user.avatar
+                }
+            })
+        } catch (err) {
+
+        }
+    })
+
 
 module.exports = router
 
