@@ -1,11 +1,12 @@
 const listModel = require('../models/List')
 const User = require('../models/User')
 const jwt = require("jsonwebtoken");
+const {isValidObjectId} = require("mongoose");
 require('dotenv').config()
+const secretKey = process.env.secret_key
 
 
 module.exports.getList = async (req, res) => {
-    const secretKey = process.env.secret_key
     const token = req.headers.authorization.split(' ')[1]
     if (!token) {
         return res.status(401).json({message: 'Bad token'})
@@ -75,13 +76,31 @@ module.exports.deleteList = async (req, res) => {
     */
 
 module.exports.deleteList = async (req, res) => {
-
+    const token = req.headers.authorization.split(' ')[1]
+    if (!token) {
+        return res.status(401).json({message: 'Bad token'})
+    }
+    const decoded = jwt.verify(token, secretKey)
+    req.user = decoded
     const {_id} = req.body
+    const listUser = await listModel.find({user: {$eq: decoded.id}},
+        {_id: req.user.id})
+    const user = await listModel.findOne({user: `${decoded.id}`})
+    console.log('listuser:',listUser)
+    console.log('decode:',decoded.id)
+    console.log('user', user.id)
+    console.log(req.body)
+    if(isValidObjectId(_id) && user.id === _id)
+    listModel.findOneAndDelete(_id, {user: {$eq: decoded.id}},
+        {_id: req.user.id})
+        .then(() => res.status(202).json({message:`Auth error, you don't have access`}))
+        .catch((e) => console.log(e))
+    else {
+        return res.status(403).json({message:`Auth error, you don't have access`})
+    }
+
 
     //if(user.id === exist.user._id.valueOf()) {
-    listModel.findByIdAndDelete(_id)
-        .then(() => res.send("Deleted Successfully"))
-        .catch((e) => console.log(e))
 
 
     /*
