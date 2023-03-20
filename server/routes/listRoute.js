@@ -4,9 +4,9 @@ const authMiddleware = require('../middleware/authMiddleware')
 const {getList, saveList, updateList, deleteList} = require("../controllers/listController");
 
 router.get('/',  getList)
-router.post('/save', authMiddleware, saveList)
+router.post('/save',  saveList)
 router.post('/update', authMiddleware, updateList)
-router.post('/delete', authMiddleware, deleteList)
+router.post('/delete', deleteList)
 
 
 module.exports = router

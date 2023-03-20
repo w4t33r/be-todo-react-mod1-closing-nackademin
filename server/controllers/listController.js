@@ -2,6 +2,7 @@ const listModel = require('../models/List')
 const User = require('../models/User')
 const mongoose = require('mongoose')
 
+
 module.exports.getList = async (req, res) => {
     // const {text} = req.body
     const getTodo = await listModel.find()
@@ -56,23 +57,29 @@ module.exports.deleteList = async (req, res) => {
     */
 
 module.exports.deleteList = async (req, res) => {
-    try {
-        const {_id} = req.body
-        const user = await User.findOne({_id: req.user.id})
-        const exist = await listModel.findOne({user: req.user.id})
 
-        const compare = String(user._id) === String(exist.user._id);
+    const {_id} = req.body
 
-        if(compare && exist.id === req.body.text) {
-            res.send.json({message:'Successfully Deleted'})
-            console.log('qq')
-            listModel.findByIdAndDelete(_id)
-        }
-        else {
-            return res.send({message: 'Auth error, deleted aborted'})
-        }
+    //if(user.id === exist.user._id.valueOf()) {
+    listModel.findByIdAndDelete(_id)
+        .then(() => res.send("Deleted Successfully"))
+        .catch((e) => console.log(e))
 
-    } catch (e) {
-        return res.send({message: 'Delete error, please check if you logged in'})
+
+    /*
+    const compare = String(user._id) === String(exist.user._id);
+
+    console.log('exist:id:',exist.id)
+    console.log('user:id', user.id)
+    console.log('req.body:id:',req.body._id)
+    if(compare && exist.id === req.body._id) {
+        res.send.json({message:'Successfully Deleted'})
+        console.log('qq')
+        listModel.findByIdAndDelete(_id)
     }
+    else {
+        return res.send({message: 'Auth error, deleted aborted'})
+    }
+
+     */
 }
