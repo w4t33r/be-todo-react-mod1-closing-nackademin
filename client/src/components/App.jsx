@@ -1,4 +1,5 @@
 import Navbar from "./Navbar";
+import Main from "./Main"
 import './app.css'
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import React, {useEffect} from "react";
@@ -22,6 +23,7 @@ function App() {
         <BrowserRouter>
             <div className="App">
                 <Navbar/>
+
                 <div className="wrap">
                     {!isAuth &&
                         <Routes>
@@ -29,6 +31,7 @@ function App() {
                             <Route path="/login" element={<Login/>}/>
                         </Routes>
                     }
+                    <Main/>
                 </div>
             </div>
         </BrowserRouter>
