@@ -1,30 +1,48 @@
 const listModel = require('../models/List')
 const User = require('../models/User')
-const mongoose = require('mongoose')
+const jwt = require("jsonwebtoken");
+require('dotenv').config()
 
 
 module.exports.getList = async (req, res) => {
-    // const {text} = req.body
-    const getTodo = await listModel.find()
+    const secretKey = process.env.secret_key
+    const token = req.headers.authorization.split(' ')[1]
+    if (!token) {
+        return res.status(401).json({message: 'Bad token'})
+    }
+    const decoded = jwt.verify(token, secretKey)
+    req.user = decoded
+    console.log('DECODE', decoded.id)
+    console.log(req.user._id)
+    const getTodo = await listModel.find({user: {$eq: decoded.id}})
     res.send(getTodo)
-}
 
+}
+/*
+module.exports.getList = async (req, res) => {
+
+    const secretKey = process.env.secret_key
+    const token = req.headers.authorization.split(' ')[1]
+    if (!token) {
+        return res.status(401).json({message: 'Bad token'})
+    }
+    const decoded = jwt.verify(token, secretKey)
+    req.user = decoded
+    console.log('DECODE', decoded)
+    console.log(req.user.id)
+    const getTodo = await listModel.find("64120126479d2328a31600da")
+    res.send(getTodo)
+
+}
+*/
 
 module.exports.saveList = async (req, res) => {
+    console.log(req.body, req.header.authorization, 'BOOOOOOOOOOOOOOOOOOO')
     const {text} = req.body
-    const createList = new listModel({text, user: req.user.id})
+    const user = await User.findById(req.user.id)
+    const createList = new listModel({text, user: user.id})
     await createList.save()
     res.send(createList)
-
-    /*await listModel
-        .create({text})
-        .then((data) => {
-            console.log('added')
-            console.log(data)
-            res.send(data)
-        })
-
-     */
 }
 
 
