@@ -1,6 +1,5 @@
 import React from 'react'
-import {updateToDo} from "../action/listAction";
-import {deleteToDo} from "../action/listAction";
+
 
 
 const ToDo = ({text, updateMode, deleteToDo}) => {
@@ -8,8 +7,8 @@ const ToDo = ({text, updateMode, deleteToDo}) => {
         <div className="todo">
             <div className="text">{text}</div>
             <div className="icons">
-                <div className='icon' onClick={updateMode}> upd</div>
-                <button className='icon' onClick={deleteToDo}> delete</button>
+                <button className='icon' onClick={updateMode}> UPDATE</button>
+                <button className='icon' onClick={deleteToDo}> DELETE</button>
             </div>
         </div>
     )

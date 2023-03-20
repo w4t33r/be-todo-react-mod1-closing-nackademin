@@ -1,7 +1,7 @@
 import Navbar from "./Navbar";
 import Main from "./Main"
 import './app.css'
-import {BrowserRouter, Route, Routes} from "react-router-dom";
+import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import React, {useEffect} from "react";
 import Registration from "./auth/Registration";
 import Login from "./auth/login";
@@ -21,22 +21,22 @@ function App() {
 
     return (
         <BrowserRouter>
-            <div className="App">
+            <div className='App'>
                 <Navbar/>
-
                 <div className="wrap">
-                    {!isAuth &&
+                    {!isAuth ?
                         <Routes>
                             <Route path="/registration" element={<Registration/>}/>
                             <Route path="/login" element={<Login/>}/>
                         </Routes>
+                        :
+                        <Routes>
+                            <Route path="/full" exact element={<Main/>}/>
+                        </Routes>
                     }
-                    <Main/>
                 </div>
             </div>
         </BrowserRouter>
-
-
     );
 }
 

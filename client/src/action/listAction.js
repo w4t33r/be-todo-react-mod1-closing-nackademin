@@ -4,19 +4,25 @@ import axios from 'axios'
 
 const getAllToDo = (setToDo) => {
     axios
-        .get("http://localhost:5000/api/list/")
-        .then(({ data }) => {
-            console.log('data ---> ', data);
+        .get("http://localhost:5000/api/list/full",  {
+            headers: {Authorization:`Bearer ${localStorage.getItem('token')}`}
+        })
+        .then(({data}) => {
+
             setToDo(data)
         })
 }
+//await axios.post(`http://localhost:5000/api/delete`, {_id}, {
+  //  headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
 
 const addToDo = (text, setText, setToDo) => {
 
     axios
-        .post(`http://localhost:5000/api/list/save`, { text })
+        .post(`http://localhost:5000/api/list/save`, {text}, {
+            headers: {Authorization: `Bearer ${localStorage.getItem('token')}`}
+        })
         .then((data) => {
-            console.log(data);
+
             setText("")
             getAllToDo(setToDo)
         })
@@ -27,28 +33,32 @@ const addToDo = (text, setText, setToDo) => {
 const updateToDo = (toDoId, text, setToDo, setText, setIsUpdating) => {
 
     axios
-        .post(`http://localhost:5000/api/list/update`, { _id: toDoId, text })
+        .post(`http://localhost:5000/api/list/update`, {_id: toDoId, text}, {
+            headers:{Authorization:`Bearer ${localStorage.getItem('token')}`}
+        } )
         .then((data) => {
             setText("")
             setIsUpdating(false)
             getAllToDo(setToDo)
         })
-        .catch((err) => console.log(err))
+        .catch((err) => alert(err))
 
 }
+
+
 
 const deleteToDo = (_id, setToDo) => {
 
     axios
-        .post(`http://localhost:5000/api/list/delete`, { _id })
+        .post(`http://localhost:5000/api/list/delete`, {_id}, {
+            headers:{Authorization:`Bearer ${localStorage.getItem('token')}`}
+        } )
         .then((data) => {
-            console.log('NT')
-            console.log(data)
             getAllToDo(setToDo)
         })
-        .catch((err) => console.log(err))
+        .catch((err) => alert(err))
 
 }
 
 
-export { getAllToDo, addToDo, updateToDo, deleteToDo }
+export {getAllToDo, addToDo, updateToDo, deleteToDo}
