@@ -76,27 +76,35 @@ module.exports.deleteList = async (req, res) => {
     */
 
 module.exports.deleteList = async (req, res) => {
-    const token = req.headers.authorization.split(' ')[1]
-    if (!token) {
-        return res.status(401).json({message: 'Bad token'})
-    }
-    const decoded = jwt.verify(token, secretKey)
-    req.user = decoded
-    const {_id} = req.body
-    const listUser = await listModel.find({user: {$eq: decoded.id}},
-        {_id: req.user.id})
-    const user = await listModel.findOne({user: `${decoded.id}`})
-    console.log('listuser:',listUser)
-    console.log('decode:',decoded.id)
-    console.log('user', user.id)
-    console.log(req.body)
-    if(isValidObjectId(_id) && user.id === _id)
-    listModel.findOneAndDelete(_id, {user: {$eq: decoded.id}},
-        {_id: req.user.id})
-        .then(() => res.status(202).json({message:`Auth error, you don't have access`}))
-        .catch((e) => console.log(e))
-    else {
-        return res.status(403).json({message:`Auth error, you don't have access`})
+    try {
+        await listModel.find({}).then(data => {
+
+            const {_id} = req.body
+            console.log('List_Object_ID:', data[0]._id.valueOf())
+            console.log('user_ref_list_id:', data[0].user.valueOf())
+            console.log('ReqBody:', _id)
+            let listRef = data[0].user.valueOf()
+            let listObjId = data[0]._id.valueOf()
+                User.find({_id: listRef}).then(user => {
+                console.log('User Find:',user[0]._id.valueOf())
+                const userExist = user[0]._id.valueOf()
+                if (isValidObjectId(_id) && listObjId === _id && userExist === listRef) {
+                    listModel.findByIdAndDelete(listObjId).then(() => res.send('Deleted'))
+                } else {
+                    res.send('bad')
+                }
+            })
+            data.map(item => {
+                console.log("obejct_id:", item._id.valueOf())
+                if(_id.includes(item._id.valueOf())) {
+                    console.log('eeeeeeeeeeeeeeeeeeeee', _id, item._id.valueOf())
+                }
+            })
+
+        })
+
+    } catch (e) {
+        res.send('Error')
     }
 
 
